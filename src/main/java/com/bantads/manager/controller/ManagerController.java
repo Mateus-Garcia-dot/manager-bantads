@@ -37,9 +37,9 @@ public class ManagerController {
     @PutMapping("/{id}")
     public ResponseEntity<ManagerModel> updateManager(@PathVariable Long id, @RequestBody ManagerModel managerModel) {
         ManagerModel manager = this.managerRepository.findById(id).orElseThrow();
-        manager.setNome(managerModel.getNome());
+        manager.setName(managerModel.getName());
         manager.setCpf(managerModel.getCpf());
-        manager.setTelefone(managerModel.getTelefone());
+        manager.setTelephone(managerModel.getTelephone());
         return ResponseEntity.ok(this.managerRepository.save(manager));
     }
 
