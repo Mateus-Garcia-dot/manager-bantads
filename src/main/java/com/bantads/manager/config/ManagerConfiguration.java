@@ -12,9 +12,9 @@ import org.springframework.context.annotation.Import;
 @Import(RabbitMqConfiguration.class)
 public class ManagerConfiguration {
 
-    static final String createQueueName = "manager.create";
-    static final String updateQueueName = "manager.update";
-    static final String deleteQueueName = "manager.delete";
+    public static final String createQueueName = "manager.create";
+    public static final String updateQueueName = "manager.update";
+    public static final String deleteQueueName = "manager.delete";
 
     @Bean
     public Queue createQueueCreate() {
