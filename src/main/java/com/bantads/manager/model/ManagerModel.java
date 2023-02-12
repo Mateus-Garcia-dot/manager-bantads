@@ -14,8 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ManagerModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String uuid = java.util.UUID.randomUUID().toString();
 
     private String name;
     private String cpf;

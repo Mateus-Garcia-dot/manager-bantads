@@ -23,7 +23,7 @@ public class ManagerConsumer {
     }
 
     @RabbitListener(queues = ManagerConfiguration.updateQueueName)
-    public void updateManager(@PathVariable Long id, @RequestBody ManagerModel managerModel) {
+    public void updateManager(@PathVariable String id, @RequestBody ManagerModel managerModel) {
         ManagerModel manager = this.managerRepository.findById(id).orElseThrow();
         manager.setName(managerModel.getName());
         manager.setCpf(managerModel.getCpf());
@@ -31,7 +31,7 @@ public class ManagerConsumer {
     }
 
     @RabbitListener(queues = ManagerConfiguration.deleteQueueName)
-    public void deleteManager(@PathVariable Long id) {
+    public void deleteManager(@PathVariable String id) {
         this.managerRepository.deleteById(id);
     }
 }

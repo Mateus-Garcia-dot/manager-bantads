@@ -18,12 +18,11 @@ public class ManagerController {
     @GetMapping
     public ResponseEntity<List<ManagerModel>> getAllmanagers() {
         List<ManagerModel> managerModelList = this.managerRepository.findAll();
-        managerModelList.sort((a, b) -> a.getId().compareTo(b.getId()));
         return ResponseEntity.ok(managerModelList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ManagerModel> getManagerById(@PathVariable Long id) {
+    public ResponseEntity<ManagerModel> getManagerById(@PathVariable String id) {
         ManagerModel managerModel = this.managerRepository.findById(id).orElseThrow();
         return ResponseEntity.ok(managerModel);
     }
@@ -35,7 +34,7 @@ public class ManagerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ManagerModel> updateManager(@PathVariable Long id, @RequestBody ManagerModel managerModel) {
+    public ResponseEntity<ManagerModel> updateManager(@PathVariable String id, @RequestBody ManagerModel managerModel) {
         ManagerModel manager = this.managerRepository.findById(id).orElseThrow();
         manager.setName(managerModel.getName());
         manager.setCpf(managerModel.getCpf());
@@ -44,7 +43,7 @@ public class ManagerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteManager(@PathVariable Long id) {
+    public ResponseEntity<String> deleteManager(@PathVariable String id) {
         this.managerRepository.deleteById(id);
         return ResponseEntity.ok("Deleted");
     }
