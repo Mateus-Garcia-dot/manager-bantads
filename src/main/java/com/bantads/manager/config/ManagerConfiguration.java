@@ -1,9 +1,6 @@
 package com.bantads.manager.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -17,6 +14,7 @@ public class ManagerConfiguration {
     public static final String deleteQueueName = "manager.delete";
     public static final String sortRequestQueueName = "manager.sort-request";
     public static final String sortResponseQueueName = "manager.sort-response";
+    public static final String delayedSortResponseQueueName = "manager.delayed-sort-response";
 
     @Bean
     public Queue createQueueCreate() {
@@ -34,13 +32,20 @@ public class ManagerConfiguration {
     }
 
     @Bean
-    public Queue sortRequestQueueGetRequest() {
-        return new Queue(sortRequestQueueName, true);
+    public Queue sortResponseQueue() {
+        return QueueBuilder.durable(sortResponseQueueName)
+                .withArgument("x-dead-letter-exchange", RabbitMqConfiguration.exchangeName)
+                .withArgument("x-dead-letter-routing-key", delayedSortResponseQueueName)
+                .build();
     }
 
     @Bean
-    public Queue sortResponseQueueGetResponse() {
-        return new Queue(sortResponseQueueName, true);
+    public Queue delayedSortResponseQueue() {
+        return QueueBuilder.durable(delayedSortResponseQueueName)
+                .withArgument("x-dead-letter-exchange", RabbitMqConfiguration.exchangeName)
+                .withArgument("x-dead-letter-routing-key", sortResponseQueueName)
+                .withArgument("x-message-ttl", 5000)
+                .build();
     }
 
     @Bean

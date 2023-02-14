@@ -38,7 +38,7 @@ public class ManagerConsumer {
     }
 
     @RabbitListener(queues = ManagerConfiguration.sortRequestQueueName)
-    public void sortManager() {
+    public void sortManager(Object obj) {
         List<ManagerModel> managerModel = this.managerRepository.findAll();
         this.rabbitTemplate.convertAndSend(ManagerConfiguration.sortResponseQueueName, managerModel);
     }
