@@ -5,6 +5,7 @@ import com.bantads.manager.model.ManagerModel;
 import com.bantads.manager.repository.ManagerRepository;
 import lombok.Data;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.util.List;
 public class ManagerConsumer {
 
     private final ManagerRepository managerRepository;
+    private final RabbitTemplate rabbitTemplate;
 
     @RabbitListener(queues = ManagerConfiguration.createQueueName)
     public void createManager(@RequestBody ManagerModel managerModel) {
@@ -33,5 +35,11 @@ public class ManagerConsumer {
     @RabbitListener(queues = ManagerConfiguration.deleteQueueName)
     public void deleteManager(@PathVariable String id) {
         this.managerRepository.deleteById(id);
+    }
+
+    @RabbitListener(queues = ManagerConfiguration.sortRequestQueueName)
+    public void getManagerById() {
+        List<ManagerModel> managerModel = this.managerRepository.findAll();
+        this.rabbitTemplate.convertAndSend(ManagerConfiguration.sortResponseQueueName, managerModel);
     }
 }
