@@ -32,6 +32,11 @@ public class ManagerConfiguration {
     }
 
     @Bean
+    public Queue sortRequestQueue() {
+        return new Queue(sortRequestQueueName, true);
+    }
+
+    @Bean
     public Queue sortResponseQueue() {
         return QueueBuilder.durable(sortResponseQueueName)
                 .withArgument("x-dead-letter-exchange", RabbitMqConfiguration.exchangeName)
@@ -64,13 +69,18 @@ public class ManagerConfiguration {
     }
 
     @Bean
-    Binding sortRequestBinding(Queue sortRequestQueueGetRequest, DirectExchange exchange) {
-        return BindingBuilder.bind(sortRequestQueueGetRequest).to(exchange).with(sortRequestQueueName);
+    Binding sortRequestBinding(Queue sortRequestQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(sortRequestQueue).to(exchange).with(sortRequestQueueName);
     }
 
     @Bean
-    Binding sortResponseBinding(Queue sortResponseQueueGetResponse, DirectExchange exchange) {
-        return BindingBuilder.bind(sortResponseQueueGetResponse).to(exchange).with(sortResponseQueueName);
+    Binding sortResponseBinding(Queue sortResponseQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(sortResponseQueue).to(exchange).with(sortResponseQueueName);
+    }
+
+    @Bean
+    Binding delayedSortResponseBinding(Queue delayedSortResponseQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(delayedSortResponseQueue).to(exchange).with(delayedSortResponseQueueName);
     }
 
 }
