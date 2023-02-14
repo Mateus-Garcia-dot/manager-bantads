@@ -34,11 +34,12 @@ public class ManagerConfiguration {
     }
 
     @Bean
-    Queue getRequestQueueGetRequest() {
+    public Queue sortRequestQueueGetRequest() {
         return new Queue(sortRequestQueueName, true);
     }
+
     @Bean
-    Queue getResponseQueueGetResponse() {
+    public Queue sortResponseQueueGetResponse() {
         return new Queue(sortResponseQueueName, true);
     }
 
@@ -58,12 +59,13 @@ public class ManagerConfiguration {
     }
 
     @Bean
-    Binding getRequestBinding(Queue getRequestQueueGetRequest, DirectExchange exchange) {
-        return BindingBuilder.bind(getRequestQueueGetRequest).to(exchange).with(sortRequestQueueName);
+    Binding sortRequestBinding(Queue sortRequestQueueGetRequest, DirectExchange exchange) {
+        return BindingBuilder.bind(sortRequestQueueGetRequest).to(exchange).with(sortRequestQueueName);
     }
 
     @Bean
-    Binding getResponseBinding(Queue getResponseQueueGetResponse, DirectExchange exchange) {
-        return BindingBuilder.bind(getResponseQueueGetResponse).to(exchange).with(sortResponseQueueName);
+    Binding sortResponseBinding(Queue sortResponseQueueGetResponse, DirectExchange exchange) {
+        return BindingBuilder.bind(sortResponseQueueGetResponse).to(exchange).with(sortResponseQueueName);
     }
+
 }
