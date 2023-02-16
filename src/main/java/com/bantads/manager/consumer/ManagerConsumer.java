@@ -44,6 +44,7 @@ public class ManagerConsumer {
         System.out.println(managerModel);
         if (managerModel.isEmpty()) {
             this.rabbitTemplate.convertAndSend(ManagerConfiguration.delayedSortRequestQueueName, 1);
+             return;
         }
         this.rabbitTemplate.convertAndSend(ManagerConfiguration.sortResponseQueueName, managerModel);
     }
