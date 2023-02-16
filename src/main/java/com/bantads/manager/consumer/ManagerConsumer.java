@@ -4,6 +4,7 @@ import com.bantads.manager.config.ManagerConfiguration;
 import com.bantads.manager.model.ManagerModel;
 import com.bantads.manager.repository.ManagerRepository;
 import lombok.Data;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +39,12 @@ public class ManagerConsumer {
     }
 
     @RabbitListener(queues = ManagerConfiguration.sortRequestQueueName)
-    public void sortManager(Object obj) {
+    public void sortManager(Object obj, Message message) {
         List<ManagerModel> managerModel = this.managerRepository.findAll();
+        System.out.println(managerModel);
+        if (managerModel.isEmpty()) {
+            this.rabbitTemplate.convertAndSend(ManagerConfiguration.delayedSortRequestQueueName, 1);
+        }
         this.rabbitTemplate.convertAndSend(ManagerConfiguration.sortResponseQueueName, managerModel);
     }
 }

@@ -13,6 +13,7 @@ public class ManagerConfiguration {
     public static final String updateQueueName = "manager.update";
     public static final String deleteQueueName = "manager.delete";
     public static final String sortRequestQueueName = "manager.sort-request";
+    public static final String delayedSortRequestQueueName = "manager.delayed-sort-request";
     public static final String sortResponseQueueName = "manager.sort-response";
     public static final String delayedSortResponseQueueName = "manager.delayed-sort-response";
 
@@ -33,7 +34,19 @@ public class ManagerConfiguration {
 
     @Bean
     public Queue sortRequestQueue() {
-        return new Queue(sortRequestQueueName, true);
+        return QueueBuilder.durable(sortRequestQueueName)
+                .withArgument("x-dead-letter-exchange", RabbitMqConfiguration.exchangeName)
+                .withArgument("x-dead-letter-routing-key", delayedSortRequestQueueName)
+                .build();
+    }
+
+    @Bean
+    public Queue delayedSortRequestQueue() {
+        return QueueBuilder.durable(delayedSortRequestQueueName)
+                .withArgument("x-dead-letter-exchange", RabbitMqConfiguration.exchangeName)
+                .withArgument("x-dead-letter-routing-key", sortRequestQueueName)
+                .withArgument("x-message-ttl", 5000)
+                .build();
     }
 
     @Bean
@@ -81,6 +94,11 @@ public class ManagerConfiguration {
     @Bean
     Binding delayedSortResponseBinding(Queue delayedSortResponseQueue, DirectExchange exchange) {
         return BindingBuilder.bind(delayedSortResponseQueue).to(exchange).with(delayedSortResponseQueueName);
+    }
+
+    @Bean
+    Binding delayedSortRequestBinding(Queue delayedSortRequestQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(delayedSortRequestQueue).to(exchange).with(delayedSortRequestQueueName);
     }
 
 }
