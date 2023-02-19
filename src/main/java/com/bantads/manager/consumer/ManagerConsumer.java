@@ -21,12 +21,12 @@ public class ManagerConsumer {
     private final RabbitTemplate rabbitTemplate;
 
     @RabbitListener(queues = ManagerConfiguration.createQueueName)
-    public void createManager(@RequestBody ManagerModel managerModel) {
+    public void createManager(ManagerModel managerModel) {
        this.managerRepository.save(managerModel);
     }
 
     @RabbitListener(queues = ManagerConfiguration.updateQueueName)
-    public void updateManager(@PathVariable String id, @RequestBody ManagerModel managerModel) {
+    public void updateManager(String id, @RequestBody ManagerModel managerModel) {
         ManagerModel manager = this.managerRepository.findById(id).orElseThrow();
         manager.setName(managerModel.getName());
         manager.setCpf(managerModel.getCpf());
@@ -34,7 +34,7 @@ public class ManagerConsumer {
     }
 
     @RabbitListener(queues = ManagerConfiguration.deleteQueueName)
-    public void deleteManager(@PathVariable String id) {
+    public void deleteManager(String id) {
         this.managerRepository.deleteById(id);
     }
 
