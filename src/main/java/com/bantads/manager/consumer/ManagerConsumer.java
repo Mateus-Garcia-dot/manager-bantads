@@ -36,6 +36,7 @@ public class ManagerConsumer {
     @RabbitListener(queues = ManagerConfiguration.deleteQueueName)
     public void deleteManager(String id) {
         this.managerRepository.deleteById(id);
+        rabbitTemplate.convertAndSend(ManagerConfiguration.sortRequestQueueName, 1);
     }
 
     @RabbitListener(queues = ManagerConfiguration.sortRequestQueueName)
