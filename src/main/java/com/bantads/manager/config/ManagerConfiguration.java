@@ -12,6 +12,7 @@ public class ManagerConfiguration {
     public static final String createQueueName = "manager.create";
     public static final String updateQueueName = "manager.update";
     public static final String deleteQueueName = "manager.delete";
+    public static final String patchQueueName = "manager.patch";
     public static final String sortRequestQueueName = "manager.sort-request";
     public static final String delayedSortRequestQueueName = "manager.delayed-sort-request";
     public static final String sortResponseQueueName = "manager.sort-response";
@@ -67,6 +68,11 @@ public class ManagerConfiguration {
     }
 
     @Bean
+    Queue patchQueuePatch() {
+        return new Queue(patchQueueName, true);
+    }
+
+    @Bean
     Binding createBinding(Queue createQueueCreate, DirectExchange exchange) {
         return BindingBuilder.bind(createQueueCreate).to(exchange).with(createQueueName);
     }
@@ -99,6 +105,11 @@ public class ManagerConfiguration {
     @Bean
     Binding delayedSortRequestBinding(Queue delayedSortRequestQueue, DirectExchange exchange) {
         return BindingBuilder.bind(delayedSortRequestQueue).to(exchange).with(delayedSortRequestQueueName);
+    }
+
+    @Bean
+    Binding patchBinding(Queue patchQueuePatch, DirectExchange exchange) {
+        return BindingBuilder.bind(patchQueuePatch).to(exchange).with(patchQueueName);
     }
 
 }

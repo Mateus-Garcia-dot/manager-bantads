@@ -49,4 +49,24 @@ public class ManagerConsumer {
         }
         this.rabbitTemplate.convertAndSend(ManagerConfiguration.sortResponseQueueName, managerModel);
     }
+
+    @RabbitListener(queues = ManagerConfiguration.patchQueueName)
+    public void patchManager(ManagerModel managerModel) {
+        ManagerModel manager = this.managerRepository.findById(managerModel.getUuid()).orElse(null);
+        if (manager == null) {
+            return;
+        }
+        if (managerModel.getName() != null) {
+            manager.setName(managerModel.getName());
+        }
+        if (managerModel.getCpf() != null) {
+            manager.setCpf(managerModel.getCpf());
+        }
+        if (managerModel.getTelephone() != null) {
+            manager.setTelephone(managerModel.getTelephone());
+        }
+        this.managerRepository.save(manager);
+    }
+
 }
+
