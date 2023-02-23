@@ -23,6 +23,7 @@ public class ManagerConsumer {
     @RabbitListener(queues = ManagerConfiguration.createQueueName)
     public void createManager(ManagerModel managerModel) {
        this.managerRepository.save(managerModel);
+       rabbitTemplate.convertAndSend(ManagerConfiguration.sortRequestQueueName, 1);
     }
 
     @RabbitListener(queues = ManagerConfiguration.updateQueueName)
